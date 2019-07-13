@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Main : MonoBehaviour
 {
@@ -15,20 +16,37 @@ public class Main : MonoBehaviour
     public GameObject About;
     public Camera camera;
 
+    // Buttons
+    [Header("Buttons")]
+    public Button StartBtn;
+
+    public Button AboutBtn;
+    public Button BackBtn;
+
+    public static Main main = null;
+
     void Awake()
     {
+        if (main == null)
+            main = this;
 
+        StartBtn.onClick.AddListener(StartGame);
+        AboutBtn.onClick.AddListener(ToAbout);
+        BackBtn.onClick.AddListener(BackTitle);
     }
-
-    // Start is called before the first frame update
-    void Start()
+    void StartGame()
     {
-        
+        Main.main.stateMachine.SetTrigger("StartGame");
     }
 
-    // Update is called once per frame
-    void Update()
+    void ToAbout()
     {
-        
+        Main.main.stateMachine.SetTrigger("About");
     }
+
+    void BackTitle()
+    {
+        Main.main.stateMachine.SetTrigger("BackToTittle");
+    }
+
 }

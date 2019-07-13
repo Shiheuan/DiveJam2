@@ -7,7 +7,11 @@ public class AboutState : StateMachineBehaviour
     //OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animator.gameObject.GetComponent<Main>().About.SetActive(true);
+        var a = Main.main.About;
+        var p = a.transform.position;
+        p.z = -10f;
+        a.SetActive(true);
+        Main.main.camera.transform.position = p;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
