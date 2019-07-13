@@ -20,6 +20,7 @@ public class ReloadEventHandler : MonoBehaviour, IPointerDownHandler, IPointerUp
             {
                 isReloaded = true;
                 // todo: reload arrows.
+                GamePlayManager.Instance().Reload();
                 print("reloading!!");
             }
         }
@@ -27,8 +28,11 @@ public class ReloadEventHandler : MonoBehaviour, IPointerDownHandler, IPointerUp
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        isPress = true;
-        clickPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (!GamePlayManager.Instance().isOver())
+        {
+            isPress = true;
+            clickPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        }
     }
 
     public void OnPointerUp(PointerEventData eventData)

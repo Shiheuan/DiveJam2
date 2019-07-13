@@ -3,20 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class GirlEventHandler : MonoBehaviour, IPointerDownHandler
 {
     private bool isDone = false;
-
+    private GamePlayManager gm = null;
     public int pos;
-    // Start is called before the first frame update
-    void Start()
+    public int score;
+    public bool isEndable = false;
+    void Awake()
     {
-        
+        gm = GamePlayManager.Instance();
     }
 
     void OnEnable()
     {
+        isDone = false;
         StartCoroutine(WaitSeconds());
     }
 
@@ -25,27 +28,49 @@ public class GirlEventHandler : MonoBehaviour, IPointerDownHandler
         // todo: girl can't wait animation.
         yield return new WaitForSeconds(3f);
 
-        if (!isDone)
+        if (!gm.isOver())
         {
-            // todo: girl "heng" animation and gameover.
-            print("heng");
-            Destroy(this);
-            GameOver();
+            if (!this.isDone && this.isEndable)
+            {
+                // todo: girl "heng" animation.
+                print("heng!");
+                Destroy(this);
+                gm.GameOver(this.pos);
+            }
+            Dispear();
         }
-    }
-
-    void GameOver()
-    {
-        print("game over!");
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        print("shot this girl.");
-        isDone = true;
-        // todo: move this to objects pool.
+        if (gm.AmmoCheck() && !gm.isOver())
+        {
+            print("shot this girl.");
+            gm.Fire();
+            this.isDone = true;
+            gm.AddMoney(score);
+            StartCoroutine(Satisfied());
+
+        }
+    }
+
+    IEnumerator Satisfied()
+    {
+        // todo: play the "heart" animation
+        var im = this.gameObject.GetComponent<Image>();
+        var c = im.color;
+        c.a = 0.2f;
+        im.color = c;
         
+        yield return new WaitForSeconds(1f);
+
+        Dispear();
+    }
+
+    private void Dispear()
+    {
+        // todo: move this to objects pool.
         this.gameObject.SetActive(false);
-        GameManager.Instance().Remove(pos);
+        gm.Remove(pos);
     }
 }
